@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+BUILD="$(pwd)"
+newline="
+"
+
+if test -f "$BUILD"/mpv_options ; then
+    IFS=$newline
+    set -- $(cat "$BUILD"/mpv_options) "$@"
+    unset -v IFS
+fi
+
+case "$PKG_CONFIG_PATH" in
+  '')
+    export PKG_CONFIG_PATH="$BUILD/build_libs/lib/pkgconfig"
+    ;;
+  *)
+    export PKG_CONFIG_PATH="$BUILD/build_libs/lib/pkgconfig:$PKG_CONFIG_PATH"
+    ;;
+esac
+
+echo Using mpv options: $OPTIONS "$@"
+
+cd "$BUILD"/mpv
+
+# add missing private dependencies from libass.pc
+# this is necessary due to the hybrid static / dynamic nature of the build
+# need to link against stdc++ in case libplacebo was built with glslang,
+# which requires that
+export LDFLAGS="$LDFLAGS $(pkg-config --libs fontconfig harfbuzz fribidi) -lstdc++"
+meson setup build -Dbuildtype=release $OPTIONS "$@"

@@ -1,0 +1,5 @@
+#!/bin/sh
+test -e mpv || exit 0
+
+cd mpv
+rm -rf build

@@ -1,0 +1,14 @@
+#!/bin/sh
+export LC_ALL=C
+
+scripts/ffmpeg-clean
+scripts/fribidi-clean
+scripts/rubberband-clean
+scripts/sndio-clean
+scripts/uchardet-clean
+scripts/bzip2-clean
+scripts/libxpresent-clean
+scripts/libass-clean
+scripts/libplacebo-clean
+scripts/mpv-clean
+rm -rf build_libs

@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+BUILD="$(pwd)"
+newline="
+"
+
+if test -f "$BUILD"/uchardet_options ; then
+    IFS=$newline
+    set -- $(cat "$BUILD"/uchardet_options) "$@"
+    unset -v IFS
+fi
+
+case "$PKG_CONFIG_PATH" in
+  '')
+    export PKG_CONFIG_PATH="$BUILD/build_libs/lib/pkgconfig"
+    ;;
+  *)
+    export PKG_CONFIG_PATH="$BUILD/build_libs/lib/pkgconfig:$PKG_CONFIG_PATH"
+    ;;
+esac
+
+cd "$BUILD"/uchardet
+cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC=ON -DCMAKE_INSTALL_PREFIX="$BUILD/build_libs" -DCMAKE_INSTALL_LIBDIR="$BUILD/build_libs/lib" $OPTIONS "$@" .
+
